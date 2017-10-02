@@ -1,0 +1,92 @@
+<!-- Setup the index.handlebars to have the template that Handlebars can render onto.
+
+Create a button in index.handlebars that will submit the user input into the database. -->
+
+<h1>Eat Da Burger!</h1>
+
+<ul>
+  {{#each burgers}}
+    <li>
+      <p>
+        {{this.id}}. {{this.burger_name}}
+
+        <button data-burgerid="{{this.id}}" class="devburger">Devour</button>
+      </p>
+    </li>
+  {{/each}}
+</ul>
+
+<h2>Add a Burger</h2>
+
+<form id="addburger" class="button-size">
+	<textarea type="text" name="burger_name"></textarea>
+	<button type="submit">Add Burger!</button>
+</form>
+
+<h2>Update Burger</h2>
+<form id="update" class="button-size">
+  <input type="text" name="id" placeholder="id">
+	<textarea type="text" name="burger_name" placeholder="what burger do you want?"></textarea>
+	<button type="submit">Update Burger!</button>
+</form>
+
+<script type="text/javascript">
+  $(".devburger").on("click", function(event) {
+    var id = $(this).data("burgerid");
+
+    // Send the DELETE/DEVOUR request.
+    $.ajax("/burgers/" + id, {
+      type: "DELETE"
+    }).then(
+      function() {
+        console.log("deleted id ", id);
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  });
+
+  $("#addburger").on("submit", function(event) {
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+
+    var newBurger = {
+      burger_name: $("#addburger [name=burger_name]").val().trim()
+    };
+
+    // Send the POST request.
+    $.ajax("/burgers", {
+      type: "POST",
+      data: newBurger
+    }).then(
+      function() {
+        console.log("added new burger");
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  });
+
+  $("#updateburger").on("submit", function(event) {
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+
+    var id = $("[name=id]").val().trim();
+
+    var updatedBurger = {
+      burger_name: $("#updateburger [name=burger_name]").val().trim()
+    };
+
+    // Send the PUT request.
+    $.ajax("/burgers/" + id, {
+      type: "PUT",
+      data: updatedBurger
+    }).then(
+      function() {
+        console.log("updated id ", id);
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  });
+</script>

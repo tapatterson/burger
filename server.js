@@ -50,6 +50,7 @@ app.post("/burgers", function(req, res) {
     if (err) {
       // If an error occurred, send a generic server faliure
       return res.status(500).end();
+      console.log(err);
     }
 
     // Send back the ID of the new quote
@@ -60,10 +61,11 @@ app.post("/burgers", function(req, res) {
 
 // Show the user the individual burger and the form to devour the burger.
 app.get("/burgers", function(req, res) {
-  connection.query("SELECT * FROM burgers;", [req.params.id], function(err, data) {
-    if (err) {
-      return res.status(500).end();
-    }
+  connection.query("SELECT * FROM burgers;",
+  	function(err, data) {
+    	if (err) {
+      	return res.status(500).end();
+    	}
 
     
     res.json(data);
@@ -88,7 +90,7 @@ app.get("/burgers", function(req, res) {
 // Update a burger by an id and then redirect to the root route.
 app.put("/api/burgers/:id", function(req, res) {
   connection.query("UPDATE burgers SET burger_name = ?, devoured = ? WHERE id = ?", [
-    req.body.burger_name, req.body.devoured, req.params.id
+    req.body.burger_name, req.params.id
   ], function(err, result) {
     if (err) {
       // If an error occurred, send a generic server faliure
